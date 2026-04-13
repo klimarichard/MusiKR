@@ -8,7 +8,7 @@ import '../chord_symbol_text.dart';
 ///
 /// Shows [ChordSymbolText] when the slot has a chord, a faint "+" icon when
 /// focused but empty, and nothing when unfocused and empty.
-class ChordSlotView extends StatelessWidget {
+class ChordSlotView extends StatefulWidget {
   final ChordSlot? slot;
   final bool isFocused;
   final VoidCallback onTap;
@@ -21,14 +21,32 @@ class ChordSlotView extends StatelessWidget {
   });
 
   @override
+  State<ChordSlotView> createState() => _ChordSlotViewState();
+}
+
+class _ChordSlotViewState extends State<ChordSlotView> {
+  bool _debugTapped = false;
+
+  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
+    Color bg;
+    if (_debugTapped) {
+      bg = Colors.red.withAlpha(128);
+    } else if (widget.isFocused) {
+      bg = AppColors.focusHighlight.withAlpha(64);
+    } else {
+      bg = Colors.transparent;
+    }
+
+    return Listener(
+      behavior: HitTestBehavior.opaque,
+      onPointerDown: (e) {
+        setState(() => _debugTapped = true);
+        widget.onTap();
+      },
       child: Container(
         height: kBarHeightDp,
-        color: isFocused
-            ? AppColors.focusHighlight.withAlpha(64)
-            : Colors.transparent,
+        color: bg,
         alignment: Alignment.center,
         child: _content(),
       ),
@@ -36,14 +54,14 @@ class ChordSlotView extends StatelessWidget {
   }
 
   Widget? _content() {
-    final chord = slot?.chord;
+    final chord = widget.slot?.chord;
     if (chord != null) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4),
         child: ChordSymbolText(chord: chord, color: Colors.black87),
       );
     }
-    if (isFocused) {
+    if (widget.isFocused) {
       return const Icon(Icons.add, size: 18, color: Colors.black38);
     }
     return null;

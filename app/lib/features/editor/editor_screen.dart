@@ -41,10 +41,13 @@ class EditorScreen extends ConsumerWidget {
             foregroundColor: AppColors.onSurface,
             actions: [EditorToolbar(songId: songId)],
           ),
-          body: ChartCanvas(songId: songId),
-          bottomSheet: state.focusedBarId != null
-              ? ChordInputPanel(songId: songId)
-              : null,
+          body: Column(
+            children: [
+              Expanded(child: ChartCanvas(songId: songId)),
+              if (state.focusedBarId != null)
+                ChordInputPanel(songId: songId),
+            ],
+          ),
         );
       },
     );

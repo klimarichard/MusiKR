@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/di/providers.dart';
 import '../../../core/utils/result.dart';
@@ -52,7 +53,9 @@ class EditorNotifier extends FamilyAsyncNotifier<EditorState, String> {
 
   /// Focuses slot [slotIndex] (1-based) within [barId].
   void focusSlot(String barId, int slotIndex) {
+    debugPrint('focusSlot barId=$barId slotIndex=$slotIndex state=${state.runtimeType}');
     _updateSync((s) => s.copyWith(focusedBarId: barId, focusedSlotIndex: slotIndex));
+    debugPrint('focusSlot after update focusedBarId=${state.valueOrNull?.focusedBarId}');
   }
 
   /// Clears bar and slot selection.

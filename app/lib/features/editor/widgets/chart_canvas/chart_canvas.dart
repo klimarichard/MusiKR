@@ -9,17 +9,21 @@ import '../../state/editor_providers.dart';
 import 'section_view.dart';
 
 /// Scrollable chart canvas that lays out [SectionView]s using [LayoutEngine].
-///
-/// Watches [editorProvider] for live song and focus state changes.
-/// Uses [LayoutBuilder] so bar widths reflow when the window is resized.
-class ChartCanvas extends ConsumerWidget {
+class ChartCanvas extends ConsumerStatefulWidget {
   final String songId;
 
   const ChartCanvas({super.key, required this.songId});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final editorAsync = ref.watch(editorProvider(songId));
+  ConsumerState<ChartCanvas> createState() => _ChartCanvasState();
+}
+
+class _ChartCanvasState extends ConsumerState<ChartCanvas> {
+  int _pointerCount = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final editorAsync = ref.watch(editorProvider(widget.songId));
     final settingsAsync = ref.watch(appSettingsProvider);
 
     return editorAsync.when(
@@ -34,8 +38,6 @@ class ChartCanvas extends ConsumerWidget {
             final availableWidth =
                 constraints.maxWidth - kCanvasPaddingDp * 2;
 
-            // Approximate pixels-per-mm from device pixel ratio.
-            // 3.78 px/mm ≈ 96 dpi (logical pixels are device-independent).
             final pixelsPerMm =
                 MediaQuery.of(context).devicePixelRatio / 3.78;
 
@@ -50,24 +52,50 @@ class ChartCanvas extends ConsumerWidget {
             final rowsBySection =
                 _groupRowsBySection(editorState.song, rows);
 
-            final notifier = ref.read(editorProvider(songId).notifier);
+            final notifier = ref.read(editorProvider(widget.songId).notifier);
 
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(kCanvasPaddingDp),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: editorState.song.sections.map((section) {
-                  return SectionView(
-                    section: section,
-                    rows: rowsBySection[section.id] ?? [],
-                    focusedBarId: editorState.focusedBarId,
-                    focusedSlotIndex: editorState.focusedSlotIndex,
-                    onSlotTap: (barId, slotPos) =>
-                        notifier.focusSlot(barId, slotPos),
-                    onSectionTap: () {},
-                  );
-                }).toList(),
-              ),
+            return Stack(
+              children: [
+                Listener(
+                  behavior: HitTestBehavior.opaque,
+                  onPointerDown: (_) =>
+                      setState(() => _pointerCount++),
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(kCanvasPaddingDp),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: editorState.song.sections.map((section) {
+                        return SectionView(
+                          section: section,
+                          rows: rowsBySection[section.id] ?? [],
+                          focusedBarId: editorState.focusedBarId,
+                          focusedSlotIndex: editorState.focusedSlotIndex,
+                          onSlotTap: (barId, slotPos) =>
+                              notifier.focusSlot(barId, slotPos),
+                          onSectionTap: () {},
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+                // DEBUG overlay — remove once tap works
+                Positioned(
+                  top: 8,
+                  left: 8,
+                  child: Container(
+                    color: Colors.black87,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8, vertical: 4),
+                    child: Text(
+                      'body taps=$_pointerCount  rows=${rows.length}  w=${availableWidth.toStringAsFixed(0)}',
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ],
             );
           },
         );
@@ -75,8 +103,6 @@ class ChartCanvas extends ConsumerWidget {
     );
   }
 
-  /// Groups [LayoutRow]s by section, using the [BarLayout.sectionId] of the
-  /// first bar in each row (all bars in a row belong to the same section).
   Map<String, List<LayoutRow>> _groupRowsBySection(
     Song song,
     List<LayoutRow> rows,
