@@ -116,7 +116,7 @@ Simple repeats, numbered endings (1st/2nd/3rd), split bar endings, D.C. al Fine,
 | LayoutEngine service | Done — equal-width mode + proportional mode; returns `List<LayoutRow>` |
 | RepeatValidator service | Done — validates repeat/navigation structure; returns `List<RepeatIssue>` with severity |
 | Editor state layer | Done — `EditorState` (@freezed), `EditorNotifier` (FamilyAsyncNotifier, undo/redo), `editorProvider` (family) |
-| Editor UI | TODO — chart canvas, chord input panel, toolbar, section/bar/slot views |
+| Editor UI | In progress — `EditorScreen`, `ChartCanvas`, `ChordSlotView` implemented with LayoutEngine integration and focus management; debug overlays still present; chord input panel and toolbar wired |
 | Library UI | Scaffold only |
 | Settings UI | Scaffold only |
 
