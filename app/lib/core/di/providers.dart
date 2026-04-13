@@ -3,6 +3,9 @@ import '../../data/repositories/in_memory_song_repository.dart';
 import '../../data/repositories/in_memory_settings_repository.dart';
 import '../../domain/repositories/song_repository.dart';
 import '../../domain/repositories/settings_repository.dart';
+import '../../domain/services/chord_parser.dart';
+import '../../domain/services/layout_engine.dart';
+import '../../domain/services/repeat_validator.dart';
 import '../../domain/use_cases/create_song_use_case.dart';
 import '../../domain/use_cases/update_chord_use_case.dart';
 import '../../domain/use_cases/insert_bar_use_case.dart';
@@ -60,4 +63,20 @@ final updateRepeatInfoUseCaseProvider = Provider<UpdateRepeatInfoUseCase>(
 
 final updateMetadataUseCaseProvider = Provider<UpdateMetadataUseCase>(
   (ref) => UpdateMetadataUseCase(),
+);
+
+// ---------------------------------------------------------------------------
+// Domain services
+// ---------------------------------------------------------------------------
+
+final chordParserProvider = Provider<ChordParser>(
+  (ref) => const ChordParser(),
+);
+
+final layoutEngineProvider = Provider<LayoutEngine>(
+  (ref) => const LayoutEngine(),
+);
+
+final repeatValidatorProvider = Provider<RepeatValidator>(
+  (ref) => const RepeatValidator(),
 );
