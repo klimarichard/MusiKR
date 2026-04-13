@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/repositories/in_memory_song_repository.dart';
 import '../../data/repositories/in_memory_settings_repository.dart';
+import '../../domain/models/app_settings.dart';
+import '../../domain/models/song.dart';
 import '../../domain/repositories/song_repository.dart';
 import '../../domain/repositories/settings_repository.dart';
 import '../../domain/services/chord_parser.dart';
@@ -79,4 +81,20 @@ final layoutEngineProvider = Provider<LayoutEngine>(
 
 final repeatValidatorProvider = Provider<RepeatValidator>(
   (ref) => const RepeatValidator(),
+);
+
+// ---------------------------------------------------------------------------
+// Derived / convenience providers
+// ---------------------------------------------------------------------------
+
+/// Current [AppSettings] — loaded once from [SettingsRepository].
+/// Invalidate after calling [SettingsRepository.saveSettings] to refresh.
+final appSettingsProvider = FutureProvider<AppSettings>(
+  (ref) => ref.read(settingsRepositoryProvider).loadSettings(),
+);
+
+/// All songs in the library, ordered by last-modified descending.
+/// Invalidate after creating/deleting a song to refresh the list.
+final libraryProvider = FutureProvider<List<Song>>(
+  (ref) => ref.read(songRepositoryProvider).listSongs(),
 );
