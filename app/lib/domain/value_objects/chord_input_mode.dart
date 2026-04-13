@@ -1,0 +1,4 @@
+enum ChordInputMode {
+  smartKeyboard,
+  text,
+}
