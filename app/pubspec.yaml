@@ -59,9 +59,9 @@ flutter:
     - assets/fonts/
 
   fonts:
-    - family: Petaluma
+    - family: Leland
       fonts:
-        - asset: assets/fonts/Petaluma.otf
-    - family: PetalumaScript
+        - asset: assets/fonts/Leland.otf
+    - family: LelandText
       fonts:
-        - asset: assets/fonts/PetalumaScript.otf
+        - asset: assets/fonts/LelandText.otf
