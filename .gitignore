@@ -1,1 +1,3 @@
 *.docx
+.flutter-plugins
+.flutter-plugins-dependencies
