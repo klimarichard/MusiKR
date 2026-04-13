@@ -1,1 +1,6 @@
-// TODO: UuidGenerator — thin wrapper over the uuid package for consistent UUID v4 generation
+import 'package:uuid/uuid.dart';
+
+const _uuid = Uuid();
+
+/// Generates a new UUID v4 string.
+String generateId() => _uuid.v4();

@@ -1,1 +1,5 @@
-// TODO: StaffSnippet — placeholder stub, implemented in Phase 4
+/// Placeholder for Phase 4 — Staff Snippet System.
+/// Fields will be populated when the snippet canvas and OMR are implemented.
+class StaffSnippet {
+  const StaffSnippet();
+}
