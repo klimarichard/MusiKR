@@ -112,18 +112,24 @@ Simple repeats, numbered endings (1st/2nd/3rd), split bar endings, D.C. al Fine,
 | Repository layer | Done — `SongRepository` + `SettingsRepository` interfaces; `InMemory*` implementations for Phase 1 |
 | Use cases | Done — `CreateSong`, `UpdateChord`, `InsertBar`, `DeleteBar`, `InsertSection`, `DeleteSection`, `UpdateRepeatInfo`, `UpdateMetadata` |
 | DI providers | Done — all Riverpod providers wired in `core/di/providers.dart` |
-| ChordParser service | TODO |
-| LayoutEngine service | TODO |
-| Editor UI | TODO — `EditorState`, `EditorNotifier`, chart canvas, chord input panel |
+| ChordParser service | Done — permissive String→ChordSymbol; never throws; all accidentals, 46 quality patterns, extensions, slash-chord bass |
+| LayoutEngine service | Done — equal-width mode + proportional mode; returns `List<LayoutRow>` |
+| RepeatValidator service | Done — validates repeat/navigation structure; returns `List<RepeatIssue>` with severity |
+| Editor state layer | Done — `EditorState` (@freezed), `EditorNotifier` (FamilyAsyncNotifier, undo/redo), `editorProvider` (family) |
+| Editor UI | TODO — chart canvas, chord input panel, toolbar, section/bar/slot views |
 | Library UI | Scaffold only |
 | Settings UI | Scaffold only |
 
 ### Development Setup Notes
 - Flutter managed via **Puro** at `C:\puro` (not default `~/.puro` — username has spaces)
-- `PURO_ROOT=C:\puro` set as system env var
-- `C:\puro\bin` on PATH with `flutter.bat` and `dart.bat` shims
+- `PURO_ROOT=C:\puro` set as Windows USER env var via `setx` — but Claude Code's bash shell does NOT inherit it
 - Android SDK at `C:\Android\sdk` (moved from default to avoid spaces-in-path NDK issue)
 - After cloning, run `flutter pub get` then `flutter pub run build_runner build --delete-conflicting-outputs` to regenerate `.freezed.dart` files (excluded from git)
+- **Flutter commands from Claude Code bash must use PowerShell with PURO_ROOT set explicitly:**
+  ```
+  powershell.exe -Command '$env:PURO_ROOT = "C:\puro"; Set-Location "C:\Users\Richard Klima\Documents\VS Code\Projects\MusiKR\app"; & "C:\puro\bin\flutter.bat" "<command>"'
+  ```
+  (single-quoted outer string — prevents bash from expanding `$env:PURO_ROOT`)
 
 ### Deferred to v2+
 US Letter, public library, licensing layer, polychords, voicing hints, Roman numeral / Nashville notation, arbitrary bar/section jumps, tuplets beyond triplets.
